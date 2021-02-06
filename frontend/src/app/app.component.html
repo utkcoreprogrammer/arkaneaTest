@@ -1,0 +1,79 @@
+<div> 
+  <div class="container" *ngIf = "!userDataObtained">
+      <h1>User Form</h1>
+      <form class="form" #registerForm="ngForm" novalidate (ngSubmit)="registerForm.form.valid && submitUserForm()">
+        <div class="form-group">
+          <label for="fname">First Name</label>
+          <input type="text" class="form-control" name="fname" [(ngModel)]="userForm.fname" required #fnameref="ngModel">
+          <div *ngIf="fnameref.errors &&(fnameref.touched || fnameref.dirty)" class ="alert alert-danger">
+            <div [hidden]="!fnameref.errors?.required">
+              Fname is required
+            </div> 
+           </div>
+        </div>    
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" class="form-control" [(ngModel)]="userForm.lname" name="lname">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" class="form-control" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" id="email" name="email" [(ngModel)]="userForm.email" #emailref="ngModel" required>
+          <div *ngIf="emailref.errors &&(emailref.touched || emailref.dirty)" class ="alert alert-danger">
+           <div [hidden]="!emailref.errors?.pattern">
+             Invalid pattern
+           </div>
+           <div *ngIf="emailref.errors &&(emailref.touched || emailref.dirty)" class ="alert alert-danger">
+            <div [hidden]="!emailref.errors?.required">
+              Email is required
+            </div> 
+           </div>
+          </div> 
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="text" class="form-control" [(ngModel)]="userForm.phone" name="phone" (keypress)="keypressEvent($event)" minlength=10 maxlength=10 required #phoneref="ngModel">
+          <div *ngIf="phoneref.errors &&(phoneref.touched || phoneref.dirty)" class ="alert alert-danger">
+            <div [hidden]="!phoneref.errors?.required">
+              Phone is required
+            </div> 
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="image">Image</label>
+          <input type="file" class="form-control" (change)="addImage($event)" [(ngModel)]="userForm.file" name="image">
+        </div>
+        <button type="submit" class="btn btn-success">{{userForm._id ? 'Update' : 'Create'}}</button>
+      </form>
+      <button (click)="getUserData() && userDataObtained = true">Go Back to List</button>
+  </div>
+  <div class="container" *ngIf = "userDataObtained">
+    <table *ngIf = "usersList && usersList.length">
+      <thead>
+        <tr>
+          <th>Fname</th>
+          <th>Lname</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>File Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of usersList;let i=index;">
+          <td>{{user.fname}}</td>
+          <td>{{user.lname}}</td>
+          <td>{{user.phone}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.file}}</td>
+          <td>
+            <button (click)="editUser(user)">Edit</button>&nbsp; &nbsp;
+            <button (click)="deleteUser(user._id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="addUser()" style="margin-top:15px;text-align:center;"> Add Users </button>
+  </div>
+</div>
+  <router-outlet></router-outlet>
+  
